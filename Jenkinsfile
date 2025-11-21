@@ -1,8 +1,9 @@
-pipeline {
+peline {
     agent any
 
     environment {
-        SCANNER_HOME = tool 'SonarScanner'
+        SCANNER_HOME = tool 'SonarScanner'     // Nombre exacto configurado en Jenkins
+        SONAR_ENV = credentials('sonar_token') // Token guardado en Jenkins
     }
 
     stages {
@@ -36,7 +37,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Ejecutando tests..."
-                    pytest || true
+                    pytest --junitxml=report.xml || true
                 '''
             }
         }
@@ -44,33 +45,34 @@ pipeline {
         stage('Coverage') {
             steps {
                 sh '''
-                    echo "Ejecutando coverage..."
                     coverage run -m pytest || true
-                    coverage xml                   # genera coverage.xml para SonarQube
+                    coverage xml -o coverage.xml || true
                 '''
             }
         }
 
-        stage('Analisis SonarQube') {
+        stage('SonarQube Analysis') {
             steps {
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    sh """
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
                         ${SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=PROYECTO_006D \
+                        -Dsonar.projectKey=proyecto006d \
                         -Dsonar.sources=. \
+                        -Dsonar.language=py \
                         -Dsonar.python.coverage.reportPaths=coverage.xml \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=$SONAR_TOKEN
-                    """
+                        -Dsonar.login=$SONAR_ENV
+                    '''
                 }
             }
         }
-    }
 
-    post {
-        always {
-            echo "Pipeline finalizado"
+        stage("Esperar a SonarQube") {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: false
+                }
+            }
         }
-    }
 
+    }
 }
