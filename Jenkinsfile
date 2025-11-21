@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'SonarScanner'     // Nombre exacto configurado en Jenkins
-        SONAR_ENV = credentials('sonar_token') // Token guardado en Jenkins
+        SONAR_ENV = credentials('TOKEN_SONAR') // Token guardado en Jenkins
     }
 
     stages {
