@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SCANNER_HOME = tool 'SonarScanner'     // Nombre exacto configurado en Jenkins
+        SCANNER_HOME = tool 'sonarQubePruebas'     // Nombre exacto configurado en Jenkins
         SONAR_ENV = credentials('TOKEN_SONAR') // Token guardado en Jenkins
     }
 
