@@ -1,20 +1,28 @@
-peline {
+pipeline {
     agent any
-
+    
     tools {
-        sonarQubeScanner 'sonar-scanner'
+        python 'python3'
     }
 
     environment {
-        SONARQUBE = credentials('sonar-token')   // Opcional si usas credenciales
+        SONARQUBE = credentials('sonar-token') 
     }
-
+    
     stages {
-
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/juaaravenas/PROYECTO_006D.git'
+                git branch: 'main', url: 'https://github.com/tuuser/tu_repo.git'
+            }
+        }
+
+        stage('Instalar dependencias') {
+            steps {
+                sh """
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install -r requirements.txt
+                """
             }
         }
 
@@ -23,12 +31,7 @@ peline {
                 withSonarQubeEnv('sonarqube') {
                     sh """
                         sonar-scanner \
-                        -Dsonar.projectKey=PROYECTO_006D \
-                        -Dsonar.projectName=PROYECTO_006D \
-                        -Dsonar.projectVersion=1.0 \
-                        -Dsonar.sources=./ \
-                        -Dsonar.language=java \
-                        -Dsonar.java.binaries=./target
+                        -Dsonar.login=$SONARQUBE
                     """
                 }
             }
@@ -43,4 +46,3 @@ peline {
         }
     }
 }
-
