@@ -8,7 +8,19 @@ pipeline {
     environment {
         SONARQUBE = credentials('sonar-token') 
     }
-    
+   
+    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+    	sh """
+        	sonar-scanner \
+        	-Dsonar.projectKey=PROYECTO_006D \
+        	-Dsonar.sources=. \
+        	-Dsonar.host.url=http://localhost:9000 \
+       		-Dsonar.login=$SONAR_TOKEN
+   	 """
+     }
+
+
+ 
     stages {
         stage('Checkout') {
             steps {
