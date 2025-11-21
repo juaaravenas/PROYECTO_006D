@@ -29,4 +29,5 @@ lineas_menu.append("5.- Salir.")
 
 showmenu(titulo_menu,lineas_menu)
 opcion_elegida = valida_opcion(len(lineas_menu))
+
 print(opcion_elegida)
