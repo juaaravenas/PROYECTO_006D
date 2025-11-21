@@ -72,4 +72,5 @@ peline {
             echo "Pipeline finalizado"
         }
     }
-}}
+
+}
