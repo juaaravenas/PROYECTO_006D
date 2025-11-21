@@ -1,9 +1,9 @@
 pipeline {
     agent any
     
-    tools {
-        python 'python3'
-    }
+
+
+
 
     environment {
         SONARQUBE = credentials('sonar-token') 
